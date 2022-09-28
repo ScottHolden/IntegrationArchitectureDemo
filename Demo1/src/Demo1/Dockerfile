@@ -7,8 +7,8 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
-COPY "Common/src/frontend/Frontend.csproj" "Common/src/frontend/"
-COPY "${demoName}/src/${demoName}.csproj" "${demoName}/src/"
+COPY "Common/src/frontend/Frontend.csproj" "Common/src/frontend/Frontend.csproj"
+COPY "${demoName}/src/${demoName}.csproj" "${demoName}/src/${demoName}.csproj"
 
 RUN dotnet restore "${demoName}/src/${demoName}.csproj"
 
@@ -17,7 +17,7 @@ COPY '${demoName}/src/' "${demoName}/src/"
 RUN dotnet build "${demoName}/src/${demoName}.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "${demoName}.csproj" -c Release -o /app/publish
+RUN dotnet publish "${demoName}/src/${demoName}.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
