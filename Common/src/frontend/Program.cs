@@ -1,0 +1,1 @@
+﻿(new Frontend.Frontend()).Run(args);

@@ -5,7 +5,6 @@ param sourceRepo string = 'https://github.com/ScottHolden/IntegrationArchitectur
 var uniqueName = '${prefix}${uniqueString(prefix, resourceGroup().id, location)}'
 var dockerFilePath = 'Demo2/src/Dockerfile'
 
-
 resource serviceBus 'Microsoft.ServiceBus/namespaces@2022-01-01-preview' = {
   name: uniqueName
   location: location
