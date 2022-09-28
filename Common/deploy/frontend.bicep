@@ -4,6 +4,7 @@ param instrumentationKey string
 param workspaceName string
 param sourceRepo string
 param dockerFilePath string
+param envSettings array = []
 
 var name = 'frontend'
 var imageName = '${uniqueName}/${name}:v1'
@@ -102,12 +103,12 @@ resource containerApp 'Microsoft.App/containerApps@2022-03-01' = {
         {
           name: name
           image: '${containerRegistry.properties.loginServer}/${imageName}'
-          env: [
+          env: concat([
             {
               name: 'ApplicationInsights_ConnectionString'
               value: instrumentationKey
             }
-          ]
+          ], envSettings)
           resources: {
             cpu: any('0.25')
             memory: '0.5Gi'
@@ -132,3 +133,5 @@ resource containerApp 'Microsoft.App/containerApps@2022-03-01' = {
 }
 
 output defaultDomain string = containerAppsEnv.properties.defaultDomain
+output containerAppId string = containerApp.id
+output containerAppPrincipalId string = containerApp.identity.principalId
