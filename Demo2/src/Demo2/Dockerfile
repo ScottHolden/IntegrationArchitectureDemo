@@ -23,4 +23,6 @@ RUN dotnet publish "Demo2/src/Demo2/Demo2.csproj" -c Release -o /app/publish
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+# wwwroot fix for publish
+COPY --from=common /src/Common/src/frontend/wwwroot ./wwwroot
 ENTRYPOINT ["dotnet", "Demo2.dll"]
