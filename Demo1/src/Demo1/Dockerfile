@@ -3,14 +3,17 @@ WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:7.0 AS common
 WORKDIR /src
 COPY "Common/src/frontend/Frontend.csproj" "Common/src/frontend/Frontend.csproj"
-COPY "Demo1/src/Demo1/Demo1.csproj" "Demo1/src/Demo1/Demo1.csproj"
-
-RUN dotnet restore "Demo1/src/Demo1/Demo1.csproj"
-
+RUN dotnet restore "Common/src/frontend/Frontend.csproj"
 COPY 'Common/src/frontend' "Common/src/frontend"
+RUN dotnet build "Common/src/frontend/Frontend.csproj" -c Release
+
+FROM common AS build
+WORKDIR /src
+COPY "Demo1/src/Demo1/Demo1.csproj" "Demo1/src/Demo1/Demo1.csproj"
+RUN dotnet restore "Demo1/src/Demo1/Demo1.csproj"
 COPY 'Demo1/src/Demo1' "Demo1/src/Demo1"
 RUN dotnet build "Demo1/src/Demo1/Demo1.csproj" -c Release -o /app/build
 
