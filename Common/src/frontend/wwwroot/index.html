@@ -1,9 +1,132 @@
 ﻿<!DOCTYPE html>
 <html>
+
 <head>
-    <title>index</title>
+    <title>Address Update</title>
+    <style>
+        html {
+            max-width: 70ch;
+            padding: 3em 1em;
+            margin: auto;
+            line-height: 1.75;
+            font-size: 1.25em;
+            color: #1d1d1d;
+            font-family: sans-serif;
+        }
+
+        .addressForm {
+            margin: auto;
+            width: 300px;
+        }
+
+        .addressForm input,
+        .addressForm select {
+            display: block;
+            box-sizing: border-box;
+            width: 100%;
+            padding: 8px 12px;
+        }
+
+        .addressForm button {
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .rightAlign {
+            text-align: right;
+        }
+
+        #statusText {
+            text-align: center;
+            margin: 0;
+        }
+
+        #spinner {
+            display: none;
+            margin: auto;
+            width: 20px;
+            height: 20px;
+            border: 10px solid transparent;
+            border-top-color: #232;
+            border-right-color: #232;
+            border-left-color: #232;
+            border-radius: 50%;
+            animation: spin 1.5s infinite linear;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg)
+            }
+            100% {
+                transform: rotate(360deg)
+            }
+        }
+    </style>
 </head>
+
 <body>
-    <h1>Hello, World!</h1>
+    <h1>Update Address:</h1>
+    <div class="addressForm">
+        <input type="text" id="addressLine1" placeholder="Address line 1" aria-label="Address line 1">
+        <input type="text" id="addressLine2" placeholder="Address line 2" aria-label="Address line 2">
+        <input type="text" id="city" placeholder="Suburb or City">
+        <select id="state" aria-label="State">
+            <option value="" disabled="" hidden="" selected="true">State</option>
+            <option value="ACT">Australian Capital Territory</option>
+            <option value="NSW">New South Wales</option>
+            <option value="NT">Northern Territory</option>
+            <option value="QLD">Queensland</option>
+            <option value="SA">South Australia</option>
+            <option value="TAS">Tasmania</option>
+            <option value="VIC">Victoria</option>
+            <option value="WA">Western Australia</option>
+        </select>
+        <input type="text" inputmode="numeric" id="postcode" placeholder="Postcode" aria-label="Postcode">
+        <select id="country" aria-label="Country">
+            <option value="Australia">Australia</option>
+        </select>
+        <div class="rightAlign">
+            <button id="updateButton">Update Address</button>
+        </div>
+        <div id="spinner"></div>
+        <p id="statusText"></p>
+    </div>
+    <script>
+        (() => {
+            const byId = x => document.getElementById(x);
+            const updateButton = byId("updateButton");
+            const updateStatus = x => {
+                byId("statusText").innerText = x; 
+                byId("spinner").style.display = "block";
+            }
+            const updateStatusDone = x => {
+                byId("statusText").innerText = x; 
+                byId("spinner").style.display = "none";
+            }
+            updateButton.addEventListener("click", e => {
+                updateButton.disabled = true;
+                updateStatus("Updating your address, please wait...");
+                
+                fetch("/submit", {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        addressLine1: byId("addressLine1").value,
+                        addressLine2: byId("addressLine2").value,
+                        city: byId("city").value,
+                        state: byId("state").value,
+                        postcode: parseInt("0" + byId("postcode").value),
+                        country: byId("country").value,
+                    })
+                })
+                    .then(x => x.text())
+                    .then(x => updateStatusDone(x))
+                    .catch(error => updateStatusDone("There was an error sending your request."))
+            });
+        })();
+    </script>
 </body>
 </html>

@@ -1,22 +1,37 @@
-﻿namespace Demo;
+﻿using Microsoft.AspNetCore.Mvc;
+
+namespace Demo;
 
 public class Frontend
 {
-	public void Run(string[] args, Func<AddressChange, Task<string>> addressChange)
+	public void Run(string[] args, Func<AddressChange, Task<string>> addressChangeFunc)
 	{
 		var app = WebApplication.CreateBuilder(args).Build();
 
 		app.UseDefaultFiles();
 		app.UseStaticFiles();
 
-		app.MapPost("submit", async () =>
+		app.MapPost("submit", async (AddressChangeRequest changeRequest) =>
 		{
-			var change = new AddressChange(Guid.NewGuid(), "abc");
-			return await addressChange(change);
+			// Todo: Validate changeRequest
+			AddressChange addressChange = new(Guid.NewGuid(), DateTimeOffset.UtcNow, changeRequest);
+			return await addressChangeFunc(addressChange);
 		});
 
 		app.Run();
 	}
 }
 
-public record AddressChange(Guid userId, string address);
+public record AddressChangeRequest(
+	string AddressLine1, 
+	string AddressLine2, 
+	string City,
+	string State,
+	int Postcode,
+	string Country
+);
+public record AddressChange(
+	Guid UserId,
+	DateTimeOffset RequestDate,
+	AddressChangeRequest Request
+);

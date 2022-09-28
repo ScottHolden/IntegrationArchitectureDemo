@@ -1,1 +1,0 @@
-﻿(new Demo.Frontend()).Run(args, x => Task.FromResult("ok"));
