@@ -6,8 +6,8 @@ public class Frontend
 	{
 		var app = WebApplication.CreateBuilder(args).Build();
 
-		app.UseStaticFiles();
 		app.UseDefaultFiles();
+		app.UseStaticFiles();
 
 		app.MapPost("submit", async () =>
 		{

@@ -107,7 +107,7 @@ resource containerApp 'Microsoft.App/containerApps@2022-03-01' = {
       containers: [
         {
           name: name
-          image: imageName
+          image: '${containerRegistry.properties.loginServer}/${imageName}'
           resources: {
             cpu: any('0.25')
             memory: '0.5Gi'
@@ -127,6 +127,7 @@ resource containerApp 'Microsoft.App/containerApps@2022-03-01' = {
   }
   dependsOn: [
     buildTask
+    containerPullRoleAssignment
   ]
 }
 
