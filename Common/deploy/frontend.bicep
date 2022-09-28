@@ -96,18 +96,18 @@ resource containerApp 'Microsoft.App/containerApps@2022-03-01' = {
           identity: containerPullIdentity.id
         }
       ]
-      dapr: {
-        enabled: true
-        appId: 'frontend'
-        appPort: 80
-        appProtocol: 'http'
-      }
     }
     template: {
       containers: [
         {
           name: name
           image: '${containerRegistry.properties.loginServer}/${imageName}'
+          env: [
+            {
+              name: 'ApplicationInsights_ConnectionString'
+              value: instrumentationKey
+            }
+          ]
           resources: {
             cpu: any('0.25')
             memory: '0.5Gi'

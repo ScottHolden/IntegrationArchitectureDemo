@@ -6,7 +6,17 @@ public class Frontend
 {
 	public void Run(string[] args, Func<AddressChange, Task<string>> addressChangeFunc)
 	{
-		var app = WebApplication.CreateBuilder(args).Build();
+		var builder = WebApplication.CreateBuilder(args);
+
+		string? appInsights = Environment.GetEnvironmentVariable("ApplicationInsights_ConnectionString");
+		if (!string.IsNullOrWhiteSpace(appInsights)) 
+		{
+			builder.Services.AddApplicationInsightsTelemetry(x => {
+				x.ConnectionString = appInsights;
+			});
+		}
+
+		var app = builder.Build();
 
 		app.UseDefaultFiles();
 		app.UseStaticFiles();
