@@ -1,9 +1,17 @@
-param prefix string = 'demo1'
+param prefix string = 'demo3'
 param location string = resourceGroup().location
 param sourceRepo string = 'https://github.com/ScottHolden/IntegrationArchitectureDemo.git'
 
 var uniqueName = '${prefix}${uniqueString(prefix, resourceGroup().id, location)}'
-var dockerFilePath = 'Demo1/src/Demo1/Dockerfile'
+var dockerFilePath = 'Demo3/src/Demo3/Dockerfile'
+
+resource serviceBus 'Microsoft.ServiceBus/namespaces@2022-01-01-preview' = {
+  name: uniqueName
+  location: location
+  properties: {
+    
+  }
+}
 
 module appinsights '../../Common/deploy/modules/appinsights.bicep' = {
   name: '${deployment().name}-appinsights'
