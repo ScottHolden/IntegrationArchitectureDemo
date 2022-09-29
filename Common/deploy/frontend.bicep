@@ -132,6 +132,6 @@ resource containerApp 'Microsoft.App/containerApps@2022-03-01' = {
   ]
 }
 
-output defaultDomain string = containerAppsEnv.properties.defaultDomain
+output frontendUrl string = containerApp.properties.configuration.ingress.fqdn
 output containerAppId string = containerApp.id
 output containerAppPrincipalId string = containerApp.identity.principalId

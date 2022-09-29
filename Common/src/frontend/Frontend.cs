@@ -1,12 +1,17 @@
-﻿using Microsoft.AspNetCore.Mvc;
-
-namespace Demo;
+﻿namespace Demo;
 
 public class Frontend
 {
 	public void Run(string[] args, Func<AddressChange, Task<string>> addressChangeFunc)
 	{
-		var builder = WebApplication.CreateBuilder(args);
+		var builderOptions = new WebApplicationOptions
+		{
+#if DEBUG
+			ContentRootPath = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly()?.Location),
+#endif
+			Args = args
+		};    
+		var builder = WebApplication.CreateBuilder(builderOptions);
 
 		string? appInsights = Environment.GetEnvironmentVariable("ApplicationInsights_ConnectionString");
 		if (!string.IsNullOrWhiteSpace(appInsights)) 

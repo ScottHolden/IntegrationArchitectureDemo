@@ -22,8 +22,8 @@ module backends '../../Common/deploy/backends.bicep' = {
   }
 }
 
-module frontend '../../Common/deploy/frontend.bicep' = {
-  name: '${deployment().name}-frontend'
+module frontend 'modules/frontend.bicep' = {
+  name: '${deployment().name}-fe'
   params: {
     location: location
     uniqueName: uniqueName
@@ -31,7 +31,8 @@ module frontend '../../Common/deploy/frontend.bicep' = {
     workspaceName: appinsights.outputs.workspaceName
     dockerFilePath: dockerFilePath
     sourceRepo: sourceRepo
+    backendUrls: backends.outputs.backendUrls
   }
 }
 
-output frontendUrl string = frontend.outputs.defaultDomain
+output frontendUrl string = frontend.outputs.frontendUrl

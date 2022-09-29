@@ -87,4 +87,4 @@ resource readerRoleAssignment 'Microsoft.Authorization/roleAssignments@2020-10-0
   }
 }
 
-output frontendUrl string = frontend.outputs.defaultDomain
+output frontendUrl string = frontend.outputs.frontendUrl

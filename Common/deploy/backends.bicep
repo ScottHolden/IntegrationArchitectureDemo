@@ -49,4 +49,3 @@ output backendUrls array = [for i in range(0, length(backendList)): {
   functionUrl: functionApps[i].outputs.functionUrl
   functionId: functionApps[i].outputs.functionId
 }]
-//?code=${functionApp::backendFunction.listkeys().default}

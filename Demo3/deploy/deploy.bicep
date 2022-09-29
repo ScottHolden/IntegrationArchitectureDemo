@@ -50,7 +50,7 @@ module frontend '../../Common/deploy/frontend.bicep' = {
         value: serviceBus.properties.serviceBusEndpoint
       }
       {
-        name: 'sb-queue'
+        name: 'sb-topic'
         value: serviceBus::topic.name
       }
     ]
