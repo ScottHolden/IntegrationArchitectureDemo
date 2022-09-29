@@ -16,6 +16,7 @@ public class Frontend
 		string? appInsights = Environment.GetEnvironmentVariable("ApplicationInsights_ConnectionString");
 		if (!string.IsNullOrWhiteSpace(appInsights)) 
 		{
+			Console.WriteLine("Using application insights!")
 			builder.Services.AddApplicationInsightsTelemetry(x => {
 				x.ConnectionString = appInsights;
 			});

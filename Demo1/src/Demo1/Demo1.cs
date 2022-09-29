@@ -1,4 +1,3 @@
-using System.Net.Http;
 using System.Net.Http.Json;
 
 namespace Demo;
@@ -30,7 +29,17 @@ public class Demo1
         foreach ((string Name, string Url) in _backends)
         {
             Console.WriteLine("Calling " + Name);
-            await _backendClient.PostAsJsonAsync(Url, change);
+            using var resp = await _backendClient.PostAsJsonAsync(Url, change);
+            if (resp.IsSuccessStatusCode)
+            {
+                string body = await resp.Content.ReadAsStringAsync();
+                Console.WriteLine(Name + ": " + body);
+            }
+            else
+            {
+				Console.WriteLine(Name + " failed: " + resp.StatusCode);
+				return "Address update failed on one or more backends.";
+			}
         }
 
         return "Address successfully updated.";

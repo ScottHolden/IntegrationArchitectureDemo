@@ -55,9 +55,13 @@ resource functionApp 'Microsoft.Web/sites@2022-03-01' = {
             name: 'req'
             type: 'httpTrigger'
             direction: 'in'
+            methods: [
+              'get'
+              'post'
+            ]
           }
           {
-            name: 'res'
+            name: '$return'
             type: 'http'
             direction: 'out'
           }
