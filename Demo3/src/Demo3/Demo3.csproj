@@ -10,5 +10,9 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\src\frontend\Frontend.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Azure.Messaging.ServiceBus" Version="7.9.0-beta.1" />
+    <PackageReference Include="Azure.Identity" Version="1.6.0" />
+  </ItemGroup>
 
 </Project>
