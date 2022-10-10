@@ -35,6 +35,13 @@ resource serviceBus 'Microsoft.ServiceBus/namespaces@2022-01-01-preview' = {
   }
 }
 
+module backendUrls 'modules/backendurls.bicep' = {
+  name: '${deployment().name}-beurls'
+  params: {
+    backends: backends.outputs.backendUrls
+  }
+}
+
 module frontend '../../Common/deploy/frontend.bicep' = {
   name: '${deployment().name}-frontend'
   params: {
@@ -44,7 +51,7 @@ module frontend '../../Common/deploy/frontend.bicep' = {
     workspaceName: appinsights.outputs.workspaceName
     dockerFilePath: dockerFilePath
     sourceRepo: sourceRepo
-    envSettings: [
+    envSettings: concat(backendUrls.outputs.backendUrls,[
       {
         name: 'sb-namespace'
         value: serviceBus.properties.serviceBusEndpoint
@@ -53,7 +60,7 @@ module frontend '../../Common/deploy/frontend.bicep' = {
         name: 'sb-queue'
         value: serviceBus::queue.name
       }
-    ]
+    ])
   }
 }
 
