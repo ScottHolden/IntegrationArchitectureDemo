@@ -24,6 +24,12 @@ ServiceBusClient sbc = new(serviceBusNamespace, credential);
 ServiceBusSender sender = sbc.CreateSender(serviceBusQueue);
 ServiceBusProcessor processor = sbc.CreateProcessor(serviceBusQueue);
 processor.ProcessMessageAsync += RecieveMessageAsync;
+processor.ProcessErrorAsync += error =>
+{
+	Console.WriteLine("ProcessErrorAsync");
+	Console.Error.WriteLine(error.Exception);
+	return Task.CompletedTask;
+};
 
 await processor.StartProcessingAsync();
 new Frontend().Run(args, AddressChangeRequest);

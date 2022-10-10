@@ -54,7 +54,7 @@ module frontend '../../Common/deploy/frontend.bicep' = {
     envSettings: concat(backendUrls.outputs.backendUrls,[
       {
         name: 'sb-namespace'
-        value: serviceBus.properties.serviceBusEndpoint
+        value: '${serviceBus.name}.servicebus.windows.net'
       }
       {
         name: 'sb-queue'

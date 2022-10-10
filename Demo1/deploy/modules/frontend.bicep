@@ -11,8 +11,8 @@ module frontend '../../../Common/deploy/frontend.bicep' = {
   params: {
     location: location
     uniqueName: uniqueName
-    instrumentationKey: instrumentationKey// appinsights.outputs.instrumentationKey
-    workspaceName: workspaceName// appinsights.outputs.workspaceName
+    instrumentationKey: instrumentationKey // appinsights.outputs.instrumentationKey
+    workspaceName: workspaceName // appinsights.outputs.workspaceName
     dockerFilePath: dockerFilePath
     sourceRepo: sourceRepo
     envSettings: [for backend in backendUrls: {
