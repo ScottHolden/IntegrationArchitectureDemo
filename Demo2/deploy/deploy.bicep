@@ -42,6 +42,10 @@ module backendUrls 'modules/backendurls.bicep' = {
   }
 }
 
+resource appInsights 'Microsoft.Insights/components@2020-02-02-preview' existing = {
+  name: appinsights.outputs.appInsightsName
+}
+
 module frontend '../../Common/deploy/frontend.bicep' = {
   name: '${deployment().name}-frontend'
   params: {
@@ -59,6 +63,10 @@ module frontend '../../Common/deploy/frontend.bicep' = {
       {
         name: 'sb-queue'
         value: serviceBus::queue.name
+      }
+      {
+        name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
+        value: appInsights.properties.ConnectionString
       }
     ])
   }

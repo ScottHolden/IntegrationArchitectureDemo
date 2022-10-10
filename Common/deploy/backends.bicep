@@ -13,27 +13,12 @@ resource appInsights 'Microsoft.Insights/components@2020-02-02-preview' existing
   name: appInsightsName
 }
 
-resource storageAccount 'Microsoft.Storage/storageAccounts@2021-04-01' = {
-  name: toLower(substring(uniqueName, 0, min(24, length(uniqueName))))
-  location: location
-  sku: {
-    name: 'Standard_LRS'
+module baseasp 'modules/baseasp.bicep' = {
+  name: '${deployment().name}-asp'
+  params: {
+    location: location
+    uniqueName: uniqueName
   }
-  kind: 'StorageV2'
-  properties: {
-    supportsHttpsTrafficOnly: true
-    accessTier: 'Hot'
-  }
-}
-
-resource functionPlan 'Microsoft.Web/serverfarms@2020-12-01' = {
-  name: uniqueName
-  location: location
-  kind: 'functionapp'
-  sku: {
-    name: 'Y1'
-  }
-  properties: {}
 }
 
 module functionApps 'modules/function.bicep' = [for backend in backendList: {
@@ -42,10 +27,10 @@ module functionApps 'modules/function.bicep' = [for backend in backendList: {
     location: location
     backendName: backend.key
     functionName: '${uniqueName}-${backend.key}'
-    functionPlanId: functionPlan.id
+    functionPlanId: baseasp.outputs.functionPlanId
     functionSourceCode: backend.value
     instrumentationKey: appInsights.properties.InstrumentationKey
-    storageAccountName: storageAccount.name
+    storageAccountName: baseasp.outputs.storageName
   }
 }]
 

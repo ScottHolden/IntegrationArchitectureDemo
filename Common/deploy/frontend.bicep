@@ -70,9 +70,12 @@ resource appInsights 'Microsoft.Insights/components@2020-02-02-preview' existing
   name: appInsightsName
 }
 
-resource containerAppsEnv 'Microsoft.App/managedEnvironments@2022-01-01-preview' = {
+resource containerAppsEnv 'Microsoft.App/managedEnvironments@2022-06-01-preview' = {
   name: uniqueName
   location: location
+  sku: {
+    name: 'Consumption'
+  }
   properties: {
     daprAIInstrumentationKey: appInsights.properties.InstrumentationKey
     appLogsConfiguration: {
@@ -85,10 +88,11 @@ resource containerAppsEnv 'Microsoft.App/managedEnvironments@2022-01-01-preview'
   }
 }
 
-resource containerApp 'Microsoft.App/containerApps@2022-03-01' = {
+resource containerApp 'Microsoft.App/containerApps@2022-06-01-preview' = {
   name: name
   location: location
   properties: {
+    environmentId: containerAppsEnv.id
     managedEnvironmentId: containerAppsEnv.id
     configuration: {
       ingress: {
@@ -107,12 +111,7 @@ resource containerApp 'Microsoft.App/containerApps@2022-03-01' = {
         {
           name: name
           image: '${containerRegistry.properties.loginServer}/${imageName}'
-          env: concat([
-            {
-              name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
-              value: appInsights.properties.ConnectionString
-            }
-          ], envSettings)
+          env: envSettings
           resources: {
             cpu: any('0.25')
             memory: '0.5Gi'
@@ -121,6 +120,17 @@ resource containerApp 'Microsoft.App/containerApps@2022-03-01' = {
       ]
       scale: {
         minReplicas: 1
+        maxReplicas: 5
+        rules: [
+          {
+            name: 'http'
+            http: {
+              metadata: {
+                concurrentRequests: '50'
+              }
+            }
+          }
+        ]
       }
     }
   }
