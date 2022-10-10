@@ -36,6 +36,7 @@ module functionApps 'modules/function.bicep' = [for backend in backendList: {
   name: '${deployment().name}-${backend.key}'
   params: {
     location: location
+    backendName: backend.key
     functionName: '${uniqueName}-${backend.key}'
     functionPlanId: functionPlan.id
     functionSourceCode: backend.value

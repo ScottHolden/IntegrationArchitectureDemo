@@ -1,4 +1,5 @@
 param location string
+param backendName string
 param functionName string
 param functionPlanId string
 param storageAccountName string
@@ -46,7 +47,7 @@ resource functionApp 'Microsoft.Web/sites@2022-03-01' = {
     httpsOnly: true
   }
   resource backendFunction 'functions@2022-03-01' = {
-    name: 'BackendFunction'
+    name: backendName
     properties: {
       config: {
         bindings: [

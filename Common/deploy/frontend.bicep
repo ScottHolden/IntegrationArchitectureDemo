@@ -7,7 +7,7 @@ param dockerFilePath string
 param envSettings array = []
 
 var name = 'frontend'
-var imageName = '${uniqueName}/${name}:v4'
+var imageName = '${uniqueName}/${name}:v6'
 
 resource containerRegistry 'Microsoft.ContainerRegistry/registries@2021-06-01-preview' = {
   name: uniqueName

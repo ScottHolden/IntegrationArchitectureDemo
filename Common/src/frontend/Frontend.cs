@@ -18,7 +18,7 @@ public class Frontend
 		{
 			Console.WriteLine("Using application insights!");
 			builder.Services.AddApplicationInsightsTelemetry(x => {
-				x.ConnectionString = appInsights;
+				x.InstrumentationKey = appInsights;
 			});
 		}
 
