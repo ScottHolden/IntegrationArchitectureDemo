@@ -1,4 +1,7 @@
-﻿namespace Demo;
+﻿using Microsoft.ApplicationInsights.Channel;
+using Microsoft.ApplicationInsights.Extensibility;
+
+namespace Demo;
 
 public class Frontend
 {
@@ -13,14 +16,9 @@ public class Frontend
 		};    
 		var builder = WebApplication.CreateBuilder(builderOptions);
 
-		string? appInsights = Environment.GetEnvironmentVariable("ApplicationInsights_ConnectionString");
-		if (!string.IsNullOrWhiteSpace(appInsights)) 
-		{
-			Console.WriteLine("Using application insights!");
-			builder.Services.AddApplicationInsightsTelemetry(x => {
-				x.InstrumentationKey = appInsights;
-			});
-		}
+		builder.Services.AddSingleton(new RoleNameTelemetryInitializer("FrontEnd"));
+		builder.Services.AddApplicationInsightsTelemetry();
+		
 
 		var app = builder.Build();
 
@@ -51,3 +49,16 @@ public record AddressChange(
 	DateTimeOffset RequestDate,
 	AddressChangeRequest Request
 );
+
+public class RoleNameTelemetryInitializer : ITelemetryInitializer
+{
+	private readonly string? _roleName;
+	public RoleNameTelemetryInitializer(string roleName)
+	{
+		_roleName = roleName;
+	}
+	public void Initialize(ITelemetry telemetry)
+	{
+		telemetry.Context.Cloud.RoleName = _roleName;
+	}
+}

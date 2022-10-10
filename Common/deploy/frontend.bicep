@@ -1,6 +1,6 @@
 param uniqueName string
 param location string
-param instrumentationKey string
+param appInsightsName string
 param workspaceName string
 param sourceRepo string
 param dockerFilePath string
@@ -62,15 +62,19 @@ resource containerPullRoleAssignment 'Microsoft.Authorization/roleAssignments@20
   }
 }
 
-resource workspace 'Microsoft.OperationalInsights/workspaces@2021-12-01-preview' existing =  {
+resource workspace 'Microsoft.OperationalInsights/workspaces@2021-12-01-preview' existing = {
   name: workspaceName
+}
+
+resource appInsights 'Microsoft.Insights/components@2020-02-02-preview' existing = {
+  name: appInsightsName
 }
 
 resource containerAppsEnv 'Microsoft.App/managedEnvironments@2022-01-01-preview' = {
   name: uniqueName
   location: location
   properties: {
-    daprAIInstrumentationKey: instrumentationKey
+    daprAIInstrumentationKey: appInsights.properties.InstrumentationKey
     appLogsConfiguration: {
       destination: 'log-analytics'
       logAnalyticsConfiguration: {
@@ -105,8 +109,8 @@ resource containerApp 'Microsoft.App/containerApps@2022-03-01' = {
           image: '${containerRegistry.properties.loginServer}/${imageName}'
           env: concat([
             {
-              name: 'ApplicationInsights_ConnectionString'
-              value: instrumentationKey
+              name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
+              value: appInsights.properties.ConnectionString
             }
           ], envSettings)
           resources: {

@@ -18,7 +18,7 @@ module backends '../../Common/deploy/backends.bicep' = {
   params: {
     location: location
     uniqueName: uniqueName
-    instrumentationKey: appinsights.outputs.instrumentationKey
+    appInsightsName: appinsights.outputs.appInsightsName
   }
 }
 
@@ -47,7 +47,7 @@ module frontend '../../Common/deploy/frontend.bicep' = {
   params: {
     location: location
     uniqueName: uniqueName
-    instrumentationKey: appinsights.outputs.instrumentationKey
+    appInsightsName: appinsights.outputs.appInsightsName
     workspaceName: appinsights.outputs.workspaceName
     dockerFilePath: dockerFilePath
     sourceRepo: sourceRepo

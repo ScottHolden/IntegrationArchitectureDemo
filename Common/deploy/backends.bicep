@@ -1,6 +1,6 @@
 param uniqueName string
 param location string
-param instrumentationKey string
+param appInsightsName string
 
 var backends = {
   backend1: loadTextContent('../src/backends/backend1.csx')
@@ -8,6 +8,10 @@ var backends = {
   backend3: loadTextContent('../src/backends/backend3.csx')
 }
 var backendList = items(backends)
+
+resource appInsights 'Microsoft.Insights/components@2020-02-02-preview' existing = {
+  name: appInsightsName
+}
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2021-04-01' = {
   name: toLower(substring(uniqueName, 0, min(24, length(uniqueName))))
@@ -40,7 +44,7 @@ module functionApps 'modules/function.bicep' = [for backend in backendList: {
     functionName: '${uniqueName}-${backend.key}'
     functionPlanId: functionPlan.id
     functionSourceCode: backend.value
-    instrumentationKey: instrumentationKey
+    instrumentationKey: appInsights.properties.InstrumentationKey
     storageAccountName: storageAccount.name
   }
 }]
