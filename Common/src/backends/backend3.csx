@@ -14,14 +14,14 @@ public static async Task<IActionResult> Run(HttpRequest req, ILogger log)
         var change = await ReadFromJsonAsync<AddressChange>(req);
         log.LogInformation($"Backend 3 - Processing address change for user {change.UserId}");
         await Task.Delay(5000);
-        log.LogError("Backend 3 has crashed!");
-        return new StatusCodeResult(500);
     }
     catch (Exception e)
     {
         log.LogError(e, "Unable to process address change");
         return new BadRequestResult();
     }
+    log.LogError("Backend 3 has crashed!");
+    throw new Exception("Backend 3 unable to process address changes");
 }
 
 private static async Task<T> ReadFromJsonAsync<T>(HttpRequest req)
