@@ -47,7 +47,7 @@ module frontend '../../Common/deploy/frontend.bicep' = {
     envSettings: [
       {
         name: 'sb-namespace'
-        value: serviceBus.properties.serviceBusEndpoint
+        value: '${serviceBus.name}.servicebus.windows.net'
       }
       {
         name: 'sb-topic'
