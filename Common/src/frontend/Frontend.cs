@@ -16,11 +16,17 @@ public class Frontend
 		};    
 		var builder = WebApplication.CreateBuilder(builderOptions);
 
-		builder.Services.AddSingleton(new RoleNameTelemetryInitializer("FrontEnd"));
-		builder.Services.AddApplicationInsightsTelemetry();
-		
+		if (!string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("APPLICATIONINSIGHTS_CONNECTION_STRING")))
+		{
+			Console.WriteLine("Using application insights");
+			builder.Services.AddApplicationInsightsTelemetry();
+			builder.Services.AddSingleton<ITelemetryInitializer>(new RoleNameTelemetryInitializer("FrontEnd"));
+		}
+
 
 		var app = builder.Build();
+		var logger = app.Services.GetRequiredService<ILogger<Frontend>>();
+		logger.LogInformation("FrontEnd starting...");
 
 		app.UseDefaultFiles();
 		app.UseStaticFiles();
@@ -52,7 +58,7 @@ public record AddressChange(
 
 public class RoleNameTelemetryInitializer : ITelemetryInitializer
 {
-	private readonly string? _roleName;
+	private readonly string _roleName;
 	public RoleNameTelemetryInitializer(string roleName)
 	{
 		_roleName = roleName;
