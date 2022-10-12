@@ -23,7 +23,13 @@ TokenCredential credential = new ManagedIdentityCredential();
 ServiceBusClient sbc = new(serviceBusNamespace, credential);
 ServiceBusSender sender = sbc.CreateSender(serviceBusQueue);
 ServiceBusProcessor processor = sbc.CreateProcessor(serviceBusQueue);
-processor.ProcessMessageAsync += RecieveMessageAsync;
+
+processor.ProcessMessageAsync += message => {
+	string json = message.Message.Body.ToString();
+	AddressChange change = JsonSerializer.Deserialize<AddressChange>(json) ?? throw new Exception("Null Deserialize of AddressChange");
+
+	return ProcessAddressChange(change);
+};
 processor.ProcessErrorAsync += error =>
 {
 	Console.WriteLine("ProcessErrorAsync");
@@ -42,13 +48,6 @@ async Task<string> AddressChangeRequest(AddressChange change)
 	return "Address update submitted.";
 }
 
-Task RecieveMessageAsync(ProcessMessageEventArgs message)
-{
-	string json = message.Message.Body.ToString();
-	AddressChange change = JsonSerializer.Deserialize<AddressChange>(json) ?? throw new Exception("Null Deserialize of AddressChange");
-
-	return ProcessAddressChange(change);
-}
 
 async Task ProcessAddressChange(AddressChange change)
 {
